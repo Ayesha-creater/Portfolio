@@ -5,33 +5,33 @@ import "./Contact.css";
 import Rotate from "react-reveal/Rotate";
 import LightSpeed from "react-reveal/LightSpeed";
 import { BsFacebook, BsGithub, BsLinkedin } from "react-icons/bs";
+
 const Contact = () => {
-  const [name, setname] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (!name || !email || !msg) {
-        toast.error("PLease Provide all fields");
-      } 
-      const formData = {
-        name: name,
-        email: email,
-        message: msg,
-      };
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/contact`,
-        formData
-      );
-      debugger;
-      if (res.data.success) {
+        toast.error("Please provide all fields");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("message", msg);
+
+      const res = await axios.post(`/api/contact`, formData);
+
+      if (res.status === 200) {
         toast.success(res.data.message);
-        setname("");
+        setName("");
         setEmail("");
         setMsg("");
       } else {
-        toast.error(res.data.message);
+        toast.error(res.data.message || "Something went wrong");
       }
     } catch (error) {
       console.log(error);
@@ -81,7 +81,7 @@ const Contact = () => {
                         placeholder="Enter your Name"
                         className="mb-3"
                         value={name}
-                        onChange={(e) => setname(e.target.value)}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                     <div className="row px-3">
